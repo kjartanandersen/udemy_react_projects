@@ -1,4 +1,5 @@
 import React from "react";
+import Head from "next/head";
 
 import { getEventById, getFeaturedEvents } from "../../helpers/api-util";
 
@@ -20,6 +21,10 @@ function EventPage(props) {
 
   return (
     <React.Fragment>
+      <Head>
+        <title>{event.title}</title>
+        <meta name="description" content="Find a lot of great events" />
+      </Head>
       <EventSummary title={event.title} />
       <EventLogistics
         date={event.date}
@@ -45,17 +50,17 @@ export async function getStaticProps(context) {
     props: {
       selectedEvent: event,
     },
-    revalidate: 30
+    revalidate: 30,
   };
-};
+}
 
 export async function getStaticPaths() {
   const events = await getFeaturedEvents();
 
-  const paths = events.map((event) => ({ params: {id: event.id} }))
+  const paths = events.map((event) => ({ params: { id: event.id } }));
 
   return {
     paths: paths,
-    fallback: 'blocking'
-  }
-};
+    fallback: "blocking",
+  };
+}
