@@ -1,10 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import classes from "./newsletter-registration.module.css";
+
+import NotificationContext from "@/store/notificationContext";
 
 function NewsletterRegistration() {
   const [newsletterString, setNewsletterString] = useState("");
   const newsletterInputRef = useRef();
   const [buttonIsDisabled, setButtonIsDisabled] = useState(false);
+
+  const ctx = useContext(NotificationContext);
 
   function newsletterHandler() {
     setNewsletterString(newsletterInputRef.current.value);
@@ -21,6 +25,12 @@ function NewsletterRegistration() {
 
     const reqbody = { email: enteredEmail };
 
+    ctx.showNotification({
+      title: "Signing Up...",
+      message: "Registering for newsletter",
+      status: "pending",
+    });
+
     fetch("/api/newsletter", {
       method: "POST",
       body: JSON.stringify(reqbody),
@@ -28,10 +38,30 @@ function NewsletterRegistration() {
         "Content-Type": "application/json",
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+
+        return response.json().then((data) => {
+          throw new Error(data.message || "Something went wrong");
+        });
+      })
       .then((data) => {
         console.log(data);
         setButtonIsDisabled(false);
+        ctx.showNotification({
+          title: "Success!",
+          message: "Successfully registered for newsletter",
+          status: "success",
+        });
+      })
+      .catch((error) => {
+        ctx.showNotification({
+          title: "Error!",
+          message: error.message || "Something went wrong!",
+          status: "error",
+        });
       });
   }
 

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 function ClientProjectsPage() {
   const router = useRouter();
 
-  function loadProjectHanlder () {
+  function loadProjectHandler () {
     router.push({
       pathname: '/clients/[id]/[clientprojectid]',
       query: {
@@ -12,11 +12,11 @@ function ClientProjectsPage() {
       }
     });
   }
-  
+
   return (
     <div>
       <h1>The projects of a given client</h1>
-      <button onClick={loadProjectHanlder}>Load Project A</button>
+      <button onClick={loadProjectHandler}>Load Project A</button>
     </div>
   );
 }
